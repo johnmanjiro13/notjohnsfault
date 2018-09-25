@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/johnmanjiro13/notjohnsfault/player/card"
+	"github.com/johnmanjiro13/notjohnsfault/game/card"
 )
 
 type Deck struct {

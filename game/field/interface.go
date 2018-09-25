@@ -1,8 +1,8 @@
 package field
 
 import (
-	"github.com/johnmanjiro13/notjohnsfault/player/discard"
-	"github.com/johnmanjiro13/notjohnsfault/player/downcard"
+	"github.com/johnmanjiro13/notjohnsfault/game/discard"
+	"github.com/johnmanjiro13/notjohnsfault/game/downcard"
 )
 
 type IField interface {

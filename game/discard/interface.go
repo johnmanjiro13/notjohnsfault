@@ -1,6 +1,6 @@
 package discard
 
-import "github.com/johnmanjiro13/notjohnsfault/player/card"
+import "github.com/johnmanjiro13/notjohnsfault/game/card"
 
 type IDiscard interface {
 	GetCards() card.Cards

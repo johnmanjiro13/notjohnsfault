@@ -1,10 +1,10 @@
 package player
 
 import (
-	"github.com/johnmanjiro13/notjohnsfault/player/card"
-	"github.com/johnmanjiro13/notjohnsfault/player/deck"
-	"github.com/johnmanjiro13/notjohnsfault/player/discard"
-	"github.com/johnmanjiro13/notjohnsfault/player/downcard"
+	"github.com/johnmanjiro13/notjohnsfault/game/card"
+	"github.com/johnmanjiro13/notjohnsfault/game/deck"
+	"github.com/johnmanjiro13/notjohnsfault/game/discard"
+	"github.com/johnmanjiro13/notjohnsfault/game/downcard"
 )
 
 type Player struct {

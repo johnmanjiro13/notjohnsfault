@@ -1,6 +1,6 @@
 package downcard
 
-import "github.com/johnmanjiro13/notjohnsfault/player/card"
+import "github.com/johnmanjiro13/notjohnsfault/game/card"
 
 type Downcard struct {
 	Cards card.Cards
