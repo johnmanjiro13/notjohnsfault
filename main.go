@@ -177,6 +177,5 @@ GAME_ROOP:
 			playField.SetLastPlayer(tmpPlayer)
 			event = "standby"
 		}
-
 	}
 }
