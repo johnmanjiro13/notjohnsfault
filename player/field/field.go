@@ -75,3 +75,10 @@ func (f *Field) SetNextPlayer(p player.Player) {
 func (f *Field) SetOppPlayer(p player.Player) {
 	f.OppPlayer = p
 }
+
+func (f *Field) ResetYellowCards() {
+	f.CurrentPlayer.ResetWarn()
+	f.NextPlayer.ResetWarn()
+	f.LastPlayer.ResetWarn()
+	f.OppPlayer.ResetWarn()
+}

@@ -45,6 +45,10 @@ func (p *Player) UseYellowCard() {
 	p.Warned = true
 }
 
+func (p *Player) ResetWarn() {
+	p.Warned = false
+}
+
 func (p *Player) SetSuspend() {
 	p.Suspended = true
 }

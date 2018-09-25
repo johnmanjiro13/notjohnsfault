@@ -81,18 +81,24 @@ func main() {
 	// フィールドに山札、伏せ札、捨て札を追加
 	playField := field.NewField(playDeck, playDowncard, playDiscard, *p1, *p2, *p3, *p4)
 
-	event := "standby"
+	event := "reset"
+	isFirst := true
 GAME_ROOP:
 	for i := 1; ; i++ {
 		currentPlayer := &playField.CurrentPlayer
 		lastPlayer := &playField.LastPlayer
 		switch event {
+		// ゲーム状態の初期化
+		case "reset":
+			playMilestone.ResetCurrentPoint()
+			playField.ResetYellowCards()
+			event = "standby"
 		// スタンバイフェイズ
 		case "standby":
 			fmt.Printf("現在のプレイヤーは%sです。", currentPlayer.ID)
 			fmt.Println("申告しますか？　監査しますか？ 1:申告 2:監査")
 			inputSelect := nextLine()
-			if (i == 1) && (inputSelect == "2") {
+			if isFirst && (inputSelect == "2") {
 				fmt.Println("初回は監査できません。")
 				continue
 			}
@@ -100,9 +106,10 @@ GAME_ROOP:
 				fmt.Println("申告します。")
 				event = "draw"
 			} else if inputSelect == "2" {
-				fmt.Println("監査します。")
+				fmt.Println("監査！")
 				event = "judge"
 			}
+			isFirst = false
 		// ドローアクション
 		case "draw":
 			drawedCard := currentPlayer.Draw()
@@ -119,6 +126,7 @@ GAME_ROOP:
 				if nextLine() == "1" {
 					currentPlayer.UseYellowCard()
 					playMilestone.SetWhiteValid()
+					fmt.Println("戒告！")
 				}
 			}
 			fmt.Printf("進捗を申告してください。現在の進捗：%d\n", playMilestone.GetCurrentPoint())
@@ -155,7 +163,12 @@ GAME_ROOP:
 			fmt.Printf("合計進捗：%d\n", sumProgress)
 			// 申告数より小さければレッドカード（最終申告は30）
 			if sumProgress < playMilestone.GetCurrentPoint() {
-				fmt.Println("監査成功！")
+				if playMilestone.GetCurrentPoint() != 30 {
+					fmt.Println("監査成功！")
+				} else if playMilestone.GetCurrentPoint() == 30 {
+					fmt.Println("目標未達！")
+				}
+
 				if lastPlayer.Suspended {
 					fmt.Printf("%sの敗北！他全員の勝利です！\n", lastPlayer.ID)
 					break GAME_ROOP
@@ -175,6 +188,7 @@ GAME_ROOP:
 			}
 			// 30より大きければゲーム終了
 			if sumProgress >= 30 {
+				fmt.Println("目標達成！")
 				fmt.Printf("%sの勝利！他全員の勝利です！\n", currentPlayer.ID)
 				break GAME_ROOP
 			}
@@ -185,7 +199,8 @@ GAME_ROOP:
 			playField.SetNextPlayer(playField.OppPlayer)
 			playField.SetOppPlayer(*lastPlayer)
 			playField.SetLastPlayer(tmpPlayer)
-			event = "standby"
+			isFirst = true
+			event = "reset"
 		}
 	}
 }

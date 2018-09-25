@@ -20,6 +20,10 @@ func (m Milestone) GetCurrentPoint() int {
 	return m.CurrentPoint
 }
 
+func (m *Milestone) ResetCurrentPoint() {
+	m.CurrentPoint = 0
+}
+
 func (m *Milestone) SetCurrentPoint(reportedNumber int) error {
 	if m.IsWhiteValid || contains(blackNum, reportedNumber) {
 		m.CurrentPoint = reportedNumber
