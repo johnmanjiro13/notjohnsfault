@@ -101,7 +101,7 @@ GAME_ROOP:
 				event = "draw"
 			} else if inputSelect == "2" {
 				fmt.Println("監査します。")
-				event = "audit"
+				event = "judge"
 			}
 		// ドローアクション
 		case "draw":
@@ -150,10 +150,10 @@ GAME_ROOP:
 			playField.SetLastPlayer(tmpPlayer)
 			event = "standby"
 		// 監査アクション
-		case "audit":
+		case "judge":
 			sumProgress := playField.ComputeSumProgress()
 			fmt.Printf("合計進捗：%d\n", sumProgress)
-			// 申告数より小さければレッドカード
+			// 申告数より小さければレッドカード（最終申告は30）
 			if sumProgress < playMilestone.GetCurrentPoint() {
 				fmt.Println("監査成功！")
 				if lastPlayer.Suspended {
@@ -162,6 +162,11 @@ GAME_ROOP:
 				}
 				fmt.Printf("%sにレッドカードが付与されます。\n", lastPlayer.ID)
 				lastPlayer.SetSuspend()
+			}
+			// 30より大きければゲーム終了
+			if sumProgress >= 30 {
+				fmt.Printf("%sの勝利！他全員の勝利です！\n", currentPlayer.ID)
+				break GAME_ROOP
 			}
 			playField.DowncardToDiscard()
 			// プレイヤーの状態移動
