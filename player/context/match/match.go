@@ -8,35 +8,32 @@ import (
 )
 
 type Match struct {
-	ID       PlayerID
 	Deck     deck.IDeck
-	Downcard downcard.Downcard
-	Discard  discard.Discard
-}
-
-func (m *Match) GetID() PlayerID {
-	return m.ID
+	Downcard downcard.IDowncard
+	Discard  discard.IDiscard
 }
 
 func (m *Match) Draw() card.ICard {
-	if c := deck.Remove; c != nil {
-		return deck.Remove()
+	if c := m.Deck.Remove(); c != nil {
+		return c
 	}
 	return nil
 }
 
 func (m *Match) ToDowncard(useCard card.ICard) {
-	downcard.Add(useCard)
+	m.Downcard.Add(useCard)
 }
 
-func (m *Match) DowncardToDiscard(deadCards downcard) {
-	cs := deadCards.GetCards()
-	discard.Add(cs)
+func (m *Match) DowncardToDiscard(deadCards downcard.Downcard) {
+	for _, c := range deadCards.GetCards() {
+		m.Discard.Add(c)
+	}
 	deadCards.Remove()
 }
 
-func (m *Match) DiscardToDeck(reuseCards discard) {
-	cs := reuseCards.GetCards()
-	deck.Add(cs)
+func (m *Match) DiscardToDeck(reuseCards discard.Discard) {
+	for _, c := range reuseCards.GetCards() {
+		m.Deck.Add(c)
+	}
 	reuseCards.Remove()
 }

@@ -7,7 +7,10 @@ import (
 	"strconv"
 
 	"github.com/johnmanjiro13/notjohnsfault/player/card"
+	"github.com/johnmanjiro13/notjohnsfault/player/context/match"
 	"github.com/johnmanjiro13/notjohnsfault/player/deck"
+	"github.com/johnmanjiro13/notjohnsfault/player/discard"
+	"github.com/johnmanjiro13/notjohnsfault/player/downcard"
 	"github.com/johnmanjiro13/notjohnsfault/player/milestone"
 )
 
@@ -47,7 +50,10 @@ func main() {
 		}
 	}
 	playDeck := deck.NewDeck(cards)
+	playDowncard := downcard.NewDowncard()
+	playDiscard := discard.NewDiscard()
 	playMilestone := milestone.NewMilestone()
+	playField := match.NewField(playDeck, playDowncard, playDiscard)
 
 	event := "standby"
 	for i := 1; ; i++ {
