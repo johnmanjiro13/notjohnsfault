@@ -6,8 +6,8 @@ type Downcard struct {
 	Cards card.Cards
 }
 
-func NewDiscard() *Discard {
-	return &Discard{}
+func NewDowncard() *Downcard {
+	return &Downcard{}
 }
 
 func (d Downcard) GetCards() card.Cards {
@@ -15,7 +15,7 @@ func (d Downcard) GetCards() card.Cards {
 }
 
 func (d *Downcard) Add(c card.ICard) {
-	d.Cards = append(card.Cards{c}, d.Cards...)
+	d.Cards = append(d.Cards, c)
 }
 
 func (d *Downcard) Remove() {
