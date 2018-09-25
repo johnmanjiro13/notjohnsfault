@@ -6,4 +6,5 @@ type IDowncard interface {
 	Add(c card.ICard)
 	Remove()
 	GetLength() int
+	GetSum() int
 }

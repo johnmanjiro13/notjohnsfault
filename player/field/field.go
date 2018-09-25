@@ -44,6 +44,10 @@ func (f *Field) DiscardToDeck(reuseCards discard.Discard) {
 	reuseCards.Remove()
 }
 
+func (f *Field) ComputeSumProgress() int {
+	return f.Downcard.GetSum()
+}
+
 func (f *Field) SetCurrentPlayer(p player.Player) {
 	f.CurrentPlayer = p
 }

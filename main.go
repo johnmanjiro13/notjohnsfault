@@ -82,8 +82,10 @@ func main() {
 	playField := field.NewField(playDeck, playDowncard, playDiscard, *p1, *p2, *p3, *p4)
 
 	event := "standby"
+GAME_ROOP:
 	for i := 1; ; i++ {
 		currentPlayer := &playField.CurrentPlayer
+		lastPlayer := &playField.LastPlayer
 		switch event {
 		// スタンバイフェイズ
 		case "standby":
@@ -97,16 +99,20 @@ func main() {
 			if inputSelect == "1" {
 				fmt.Println("申告します。")
 				event = "draw"
+			} else if inputSelect == "2" {
+				fmt.Println("監査します。")
+				event = "audit"
 			}
 		// ドローアクション
 		case "draw":
 			drawedCard := currentPlayer.Draw()
 			fmt.Printf("カードをドローしました。%v\n", drawedCard)
+			currentPlayer.ToDowncard(drawedCard)
 			event = "report"
 		// 申告アクション
 		case "report":
 			if !currentPlayer.Warned {
-				fmt.Println("イエローカードを使用しますか？ 1:使用 2:不使用")
+				fmt.Printf("イエローカードを使用しますか？ 現在の進捗：%d 1:使用 2:不使用\n", playMilestone.GetCurrentPoint())
 				if nextLine() == "1" {
 					currentPlayer.UseYellowCard()
 					playMilestone.SetWhiteValid()
@@ -127,14 +133,41 @@ func main() {
 				continue
 			}
 			fmt.Printf("進捗を報告しました。%d\n", playMilestone.GetCurrentPoint())
+			// 進捗が30を超えていたら最終判定へ
+			if playMilestone.GetCurrentPoint() >= 30 {
+				event = "judge"
+				continue
+			}
 			playMilestone.RemoveWhiteValid()
 			// プレイヤーの状態移動
 			tmpPlayer := *currentPlayer
 			playField.SetCurrentPlayer(playField.NextPlayer)
 			playField.SetNextPlayer(playField.OppPlayer)
-			playField.SetOppPlayer(playField.LastPlayer)
+			playField.SetOppPlayer(*lastPlayer)
+			playField.SetLastPlayer(tmpPlayer)
+			event = "standby"
+		// 監査アクション
+		case "audit":
+			sumProgress := playField.ComputeSumProgress()
+			fmt.Printf("合計進捗：%d\n", sumProgress)
+			// 申告数より小さければレッドカード
+			if sumProgress < playMilestone.GetCurrentPoint() {
+				fmt.Println("監査成功！")
+				if lastPlayer.Suspended {
+					fmt.Printf("%sの敗北！他全員の勝利です！\n", lastPlayer.ID)
+					break GAME_ROOP
+				}
+				fmt.Printf("%sにレッドカードが付与されます。\n", lastPlayer.ID)
+				lastPlayer.SetSuspend()
+			}
+			// プレイヤーの状態移動
+			tmpPlayer := *currentPlayer
+			playField.SetCurrentPlayer(playField.NextPlayer)
+			playField.SetNextPlayer(playField.OppPlayer)
+			playField.SetOppPlayer(*lastPlayer)
 			playField.SetLastPlayer(tmpPlayer)
 			event = "standby"
 		}
+
 	}
 }
