@@ -1,3 +1,3 @@
-package match
+package player
 
 type PlayerID string

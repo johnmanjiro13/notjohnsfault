@@ -7,11 +7,12 @@ import (
 	"strconv"
 
 	"github.com/johnmanjiro13/notjohnsfault/player/card"
-	"github.com/johnmanjiro13/notjohnsfault/player/context/match"
 	"github.com/johnmanjiro13/notjohnsfault/player/deck"
 	"github.com/johnmanjiro13/notjohnsfault/player/discard"
 	"github.com/johnmanjiro13/notjohnsfault/player/downcard"
+	"github.com/johnmanjiro13/notjohnsfault/player/field"
 	"github.com/johnmanjiro13/notjohnsfault/player/milestone"
+	"github.com/johnmanjiro13/notjohnsfault/player/player"
 )
 
 var sc = bufio.NewScanner(os.Stdin)
@@ -22,7 +23,7 @@ func nextLine() string {
 }
 
 func main() {
-	// 山札の初期化
+	// 各カード要素の初期化
 	cards := []card.ICard{}
 	for i := 0; i < 32; i++ {
 		switch {
@@ -52,13 +53,41 @@ func main() {
 	playDeck := deck.NewDeck(cards)
 	playDowncard := downcard.NewDowncard()
 	playDiscard := discard.NewDiscard()
+
+	// マイルストーン
 	playMilestone := milestone.NewMilestone()
-	playField := match.NewField(playDeck, playDowncard, playDiscard)
+
+	// プレイヤーの追加
+	p1 := player.NewPlayer(
+		"p1",
+		playDeck,
+		playDowncard,
+	)
+	p2 := player.NewPlayer(
+		"p2",
+		playDeck,
+		playDowncard,
+	)
+	p3 := player.NewPlayer(
+		"p3",
+		playDeck,
+		playDowncard,
+	)
+	p4 := player.NewPlayer(
+		"p4",
+		playDeck,
+		playDowncard,
+	)
+	// フィールドに山札、伏せ札、捨て札を追加
+	playField := field.NewField(playDeck, playDowncard, playDiscard, *p1, *p2, *p3, *p4)
 
 	event := "standby"
 	for i := 1; ; i++ {
+		currentPlayer := &playField.CurrentPlayer
 		switch event {
+		// スタンバイフェイズ
 		case "standby":
+			fmt.Printf("現在のプレイヤーは%sです。", currentPlayer.ID)
 			fmt.Println("申告しますか？　監査しますか？ 1:申告 2:監査")
 			inputSelect := nextLine()
 			if (i == 1) && (inputSelect == "2") {
@@ -67,17 +96,25 @@ func main() {
 			}
 			if inputSelect == "1" {
 				fmt.Println("申告します。")
-				event = "report"
+				event = "draw"
 			}
-		case "report":
-			drawedCard := playDeck.Remove()
+		// ドローアクション
+		case "draw":
+			drawedCard := currentPlayer.Draw()
 			fmt.Printf("カードをドローしました。%v\n", drawedCard)
-			fmt.Println("イエローカードを使用しますか？ 1:使用 2:不使用")
-			if nextLine() == "1" {
-				playMilestone.SetWhiteValid()
+			event = "report"
+		// 申告アクション
+		case "report":
+			if !currentPlayer.Warned {
+				fmt.Println("イエローカードを使用しますか？ 1:使用 2:不使用")
+				if nextLine() == "1" {
+					currentPlayer.UseYellowCard()
+					playMilestone.SetWhiteValid()
+				}
 			}
 			fmt.Printf("進捗を申告してください。現在の進捗：%d\n", playMilestone.GetCurrentPoint())
 			event = "milestone"
+		// 数字選択アクション
 		case "milestone":
 			inputNum, _ := strconv.Atoi(nextLine())
 			if inputNum <= playMilestone.GetCurrentPoint() {
@@ -86,11 +123,18 @@ func main() {
 			}
 			err := playMilestone.SetCurrentPoint(inputNum)
 			if err != nil {
-				fmt.Println("無効な数字です。")
+				fmt.Println("無効な数字です。もう一度申告してください。")
 				continue
 			}
 			fmt.Printf("進捗を報告しました。%d\n", playMilestone.GetCurrentPoint())
 			playMilestone.RemoveWhiteValid()
+			// プレイヤーの状態移動
+			tmpPlayer := *currentPlayer
+			playField.SetCurrentPlayer(playField.NextPlayer)
+			playField.SetNextPlayer(playField.OppPlayer)
+			playField.SetOppPlayer(playField.LastPlayer)
+			playField.SetLastPlayer(tmpPlayer)
+			event = "standby"
 		}
 	}
 }
