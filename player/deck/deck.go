@@ -1,6 +1,9 @@
 package deck
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/johnmanjiro13/notjohnsfault/player/card"
 )
 
@@ -22,7 +25,8 @@ func (d *Deck) Remove() card.ICard {
 	if len(d.Cards) <= 0 {
 		return nil
 	}
-	c := d.Cards[0]
+	rand.Seed(time.Now().UnixNano())
+	c := d.Cards[rand.Intn(len(d.Cards))]
 	d.Cards = d.Cards[1:]
 	return c
 }
