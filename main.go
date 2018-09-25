@@ -6,13 +6,13 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/johnmanjiro13/notjohnsfault/player/card"
-	"github.com/johnmanjiro13/notjohnsfault/player/deck"
-	"github.com/johnmanjiro13/notjohnsfault/player/discard"
-	"github.com/johnmanjiro13/notjohnsfault/player/downcard"
-	"github.com/johnmanjiro13/notjohnsfault/player/field"
-	"github.com/johnmanjiro13/notjohnsfault/player/milestone"
-	"github.com/johnmanjiro13/notjohnsfault/player/player"
+	"github.com/johnmanjiro13/notjohnsfault/game/card"
+	"github.com/johnmanjiro13/notjohnsfault/game/deck"
+	"github.com/johnmanjiro13/notjohnsfault/game/discard"
+	"github.com/johnmanjiro13/notjohnsfault/game/downcard"
+	"github.com/johnmanjiro13/notjohnsfault/game/field"
+	"github.com/johnmanjiro13/notjohnsfault/game/milestone"
+	"github.com/johnmanjiro13/notjohnsfault/game/player"
 )
 
 var sc = bufio.NewScanner(os.Stdin)
