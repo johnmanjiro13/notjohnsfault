@@ -163,6 +163,16 @@ GAME_ROOP:
 				fmt.Printf("%sにレッドカードが付与されます。\n", lastPlayer.ID)
 				lastPlayer.SetSuspend()
 			}
+			// 申告数より大きければ監査した側にレッドカード
+			if sumProgress >= playMilestone.GetCurrentPoint() {
+				fmt.Println("監査失敗！")
+				if currentPlayer.Suspended {
+					fmt.Printf("%sの敗北！他全員の勝利です！\n", currentPlayer.ID)
+					break GAME_ROOP
+				}
+				fmt.Printf("%sにレッドカードが付与されます。\n", currentPlayer.ID)
+				currentPlayer.SetSuspend()
+			}
 			// 30より大きければゲーム終了
 			if sumProgress >= 30 {
 				fmt.Printf("%sの勝利！他全員の勝利です！\n", currentPlayer.ID)

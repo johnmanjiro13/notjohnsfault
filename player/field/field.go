@@ -1,8 +1,6 @@
 package field
 
 import (
-	"fmt"
-
 	"github.com/johnmanjiro13/notjohnsfault/player/deck"
 	"github.com/johnmanjiro13/notjohnsfault/player/discard"
 	"github.com/johnmanjiro13/notjohnsfault/player/downcard"
@@ -36,7 +34,6 @@ func (f *Field) DowncardToDiscard() {
 	for _, c := range f.Downcard.GetCards() {
 		f.Discard.Add(c)
 	}
-	fmt.Println(f.Discard.GetCards())
 	f.Downcard.Remove()
 }
 
