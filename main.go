@@ -171,6 +171,12 @@ GAME_ROOP:
 
 				if lastPlayer.Suspended {
 					fmt.Printf("%sの敗北！他全員の勝利です！\n", lastPlayer.ID)
+					fmt.Println("もう一度プレイしますか？ 1：はい 2：いいえ")
+					if nextLine() == "1" {
+						playField.ResetRedCards()
+						event = "reset"
+						continue
+					}
 					break GAME_ROOP
 				}
 				fmt.Printf("%sにレッドカードが付与されます。\n", lastPlayer.ID)
@@ -181,6 +187,12 @@ GAME_ROOP:
 				fmt.Println("監査失敗！")
 				if currentPlayer.Suspended {
 					fmt.Printf("%sの敗北！他全員の勝利です！\n", currentPlayer.ID)
+					fmt.Println("もう一度プレイしますか？ 1：はい 2：いいえ")
+					if nextLine() == "1" {
+						playField.ResetRedCards()
+						event = "reset"
+						continue
+					}
 					break GAME_ROOP
 				}
 				fmt.Printf("%sにレッドカードが付与されます。\n", currentPlayer.ID)
@@ -189,7 +201,13 @@ GAME_ROOP:
 			// 30より大きければゲーム終了
 			if sumProgress >= 30 {
 				fmt.Println("目標達成！")
-				fmt.Printf("%sの勝利！他全員の勝利です！\n", currentPlayer.ID)
+				fmt.Printf("%sの勝利！他全員の敗北です！\n", currentPlayer.ID)
+				fmt.Println("もう一度プレイしますか？ 1：はい 2：いいえ")
+				if nextLine() == "1" {
+					playField.ResetRedCards()
+					event = "reset"
+					continue
+				}
 				break GAME_ROOP
 			}
 			playField.DowncardToDiscard()

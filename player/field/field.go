@@ -82,3 +82,10 @@ func (f *Field) ResetYellowCards() {
 	f.LastPlayer.ResetWarn()
 	f.OppPlayer.ResetWarn()
 }
+
+func (f *Field) ResetRedCards() {
+	f.CurrentPlayer.ResetSuspend()
+	f.NextPlayer.ResetSuspend()
+	f.LastPlayer.ResetSuspend()
+	f.OppPlayer.ResetSuspend()
+}

@@ -52,3 +52,7 @@ func (p *Player) ResetWarn() {
 func (p *Player) SetSuspend() {
 	p.Suspended = true
 }
+
+func (p *Player) ResetSuspend() {
+	p.Suspended = false
+}
