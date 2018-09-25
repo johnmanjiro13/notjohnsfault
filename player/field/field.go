@@ -1,6 +1,8 @@
 package field
 
 import (
+	"fmt"
+
 	"github.com/johnmanjiro13/notjohnsfault/player/deck"
 	"github.com/johnmanjiro13/notjohnsfault/player/discard"
 	"github.com/johnmanjiro13/notjohnsfault/player/downcard"
@@ -30,22 +32,35 @@ func NewField(dc deck.IDeck, dwc downcard.IDowncard, dic discard.IDiscard,
 	}
 }
 
-func (f *Field) DowncardToDiscard(deadCards downcard.Downcard) {
-	for _, c := range deadCards.GetCards() {
+func (f *Field) DowncardToDiscard() {
+	for _, c := range f.Downcard.GetCards() {
 		f.Discard.Add(c)
 	}
-	deadCards.Remove()
+	fmt.Println(f.Discard.GetCards())
+	f.Downcard.Remove()
 }
 
-func (f *Field) DiscardToDeck(reuseCards discard.Discard) {
-	for _, c := range reuseCards.GetCards() {
+func (f *Field) DiscardToDeck() {
+	for _, c := range f.Discard.GetCards() {
 		f.Deck.Add(c)
 	}
-	reuseCards.Remove()
+	f.Discard.Remove()
 }
 
 func (f *Field) ComputeSumProgress() int {
 	return f.Downcard.GetSum()
+}
+
+func (f *Field) GetDeckLength() int {
+	return f.Deck.GetLength()
+}
+
+func (f *Field) GetDiscardLength() int {
+	return f.Discard.GetLength()
+}
+
+func (f *Field) GetDowncardLength() int {
+	return f.Downcard.GetLength()
 }
 
 func (f *Field) SetCurrentPlayer(p player.Player) {

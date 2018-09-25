@@ -17,7 +17,7 @@ func NewDeck(c []card.ICard) *Deck {
 	}
 }
 
-func (d Deck) Add(c card.ICard) {
+func (d *Deck) Add(c card.ICard) {
 	d.Cards = append(d.Cards, c)
 }
 

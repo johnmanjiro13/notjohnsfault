@@ -108,6 +108,9 @@ GAME_ROOP:
 			drawedCard := currentPlayer.Draw()
 			fmt.Printf("カードをドローしました。%v\n", drawedCard)
 			currentPlayer.ToDowncard(drawedCard)
+			if playField.GetDeckLength() == 0 {
+				playField.DiscardToDeck()
+			}
 			event = "report"
 		// 申告アクション
 		case "report":
@@ -160,6 +163,7 @@ GAME_ROOP:
 				fmt.Printf("%sにレッドカードが付与されます。\n", lastPlayer.ID)
 				lastPlayer.SetSuspend()
 			}
+			playField.DowncardToDiscard()
 			// プレイヤーの状態移動
 			tmpPlayer := *currentPlayer
 			playField.SetCurrentPlayer(playField.NextPlayer)

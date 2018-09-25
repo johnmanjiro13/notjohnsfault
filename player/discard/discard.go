@@ -14,7 +14,7 @@ func (d Discard) GetCards() card.Cards {
 	return d.Cards
 }
 
-func (d Discard) Add(c card.ICard) {
+func (d *Discard) Add(c card.ICard) {
 	d.Cards = append(d.Cards, c)
 }
 
