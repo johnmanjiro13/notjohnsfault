@@ -59,22 +59,22 @@ func main() {
 
 	// プレイヤーの追加
 	p1 := player.NewPlayer(
-		"p1",
+		"Player1",
 		playDeck,
 		playDowncard,
 	)
 	p2 := player.NewPlayer(
-		"p2",
+		"Player2",
 		playDeck,
 		playDowncard,
 	)
 	p3 := player.NewPlayer(
-		"p3",
+		"Player3",
 		playDeck,
 		playDowncard,
 	)
 	p4 := player.NewPlayer(
-		"p4",
+		"Player4",
 		playDeck,
 		playDowncard,
 	)
@@ -95,7 +95,7 @@ GAME_ROOP:
 			event = "standby"
 		// スタンバイフェイズ
 		case "standby":
-			fmt.Printf("現在のプレイヤーは%sです。", currentPlayer.ID)
+			fmt.Printf("GM：現在のプレイヤーは%sです。", currentPlayer.ID)
 			fmt.Println("申告しますか？　監査しますか？ 1:申告 2:監査")
 			inputSelect := nextLine()
 			if isFirst && (inputSelect == "2") {
@@ -103,17 +103,17 @@ GAME_ROOP:
 				continue
 			}
 			if inputSelect == "1" {
-				fmt.Println("申告します。")
+				fmt.Println("GM：申告します。")
 				event = "draw"
 			} else if inputSelect == "2" {
-				fmt.Println("監査！")
+				fmt.Println("GM：監査！")
 				event = "judge"
 			}
 			isFirst = false
 		// ドローアクション
 		case "draw":
 			drawedCard := currentPlayer.Draw()
-			fmt.Printf("カードをドローしました。%v\n", drawedCard)
+			fmt.Printf("GM：カードをドローしました。%v\n", drawedCard)
 			currentPlayer.ToDowncard(drawedCard)
 			if playField.GetDeckLength() == 0 {
 				playField.DiscardToDeck()
@@ -122,28 +122,28 @@ GAME_ROOP:
 		// 申告アクション
 		case "report":
 			if !currentPlayer.Warned {
-				fmt.Printf("イエローカードを使用しますか？ 現在の進捗：%d 1:使用 2:不使用\n", playMilestone.GetCurrentPoint())
+				fmt.Printf("GM：イエローカードを使用しますか？ 現在の進捗：%d 1:使用 2:不使用\n", playMilestone.GetCurrentPoint())
 				if nextLine() == "1" {
 					currentPlayer.UseYellowCard()
 					playMilestone.SetWhiteValid()
 					fmt.Println("戒告！")
 				}
 			}
-			fmt.Printf("進捗を申告してください。現在の進捗：%d\n", playMilestone.GetCurrentPoint())
+			fmt.Printf("GM：進捗を申告してください。現在の進捗：%d\n", playMilestone.GetCurrentPoint())
 			event = "milestone"
 		// 数字選択アクション
 		case "milestone":
 			inputNum, _ := strconv.Atoi(nextLine())
 			if inputNum <= playMilestone.GetCurrentPoint() {
-				fmt.Println("現在の進捗より大きな数字を申告してください。")
+				fmt.Println("GM：現在の進捗より大きな数字を申告してください。")
 				continue
 			}
 			err := playMilestone.SetCurrentPoint(inputNum)
 			if err != nil {
-				fmt.Println("無効な数字です。もう一度申告してください。")
+				fmt.Println("GM：無効な数字です。もう一度申告してください。")
 				continue
 			}
-			fmt.Printf("進捗を報告しました。%d\n", playMilestone.GetCurrentPoint())
+			fmt.Printf("GM：進捗を報告しました。%d\n", playMilestone.GetCurrentPoint())
 			// 進捗が30を超えていたら最終判定へ
 			if playMilestone.GetCurrentPoint() >= 30 {
 				event = "judge"
@@ -160,18 +160,18 @@ GAME_ROOP:
 		// 監査アクション
 		case "judge":
 			sumProgress := playField.ComputeSumProgress()
-			fmt.Printf("合計進捗：%d\n", sumProgress)
+			fmt.Printf("GM：合計進捗：%d\n", sumProgress)
 			// 申告数より小さければレッドカード（最終申告は30）
 			if sumProgress < playMilestone.GetCurrentPoint() {
 				if playMilestone.GetCurrentPoint() != 30 {
-					fmt.Println("監査成功！")
+					fmt.Println("GM：監査成功！")
 				} else if playMilestone.GetCurrentPoint() == 30 {
-					fmt.Println("目標未達！")
+					fmt.Println("GM：目標未達！")
 				}
 
 				if lastPlayer.Suspended {
-					fmt.Printf("%sの敗北！他全員の勝利です！\n", lastPlayer.ID)
-					fmt.Println("もう一度プレイしますか？ 1：はい 2：いいえ")
+					fmt.Printf("GM：%sの敗北！他全員の勝利です！\n", lastPlayer.ID)
+					fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 					if nextLine() == "1" {
 						playField.ResetRedCards()
 						event = "reset"
@@ -179,15 +179,15 @@ GAME_ROOP:
 					}
 					break GAME_ROOP
 				}
-				fmt.Printf("%sにレッドカードが付与されます。\n", lastPlayer.ID)
+				fmt.Printf("GM：%sにレッドカードが付与されます。\n", lastPlayer.ID)
 				lastPlayer.SetSuspend()
 			}
 			// 申告数より大きければ監査した側にレッドカード
 			if sumProgress >= playMilestone.GetCurrentPoint() {
-				fmt.Println("監査失敗！")
+				fmt.Println("GM：監査失敗！")
 				if currentPlayer.Suspended {
-					fmt.Printf("%sの敗北！他全員の勝利です！\n", currentPlayer.ID)
-					fmt.Println("もう一度プレイしますか？ 1：はい 2：いいえ")
+					fmt.Printf("GM：%sの敗北！他全員の勝利です！\n", currentPlayer.ID)
+					fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 					if nextLine() == "1" {
 						playField.ResetRedCards()
 						event = "reset"
@@ -195,14 +195,14 @@ GAME_ROOP:
 					}
 					break GAME_ROOP
 				}
-				fmt.Printf("%sにレッドカードが付与されます。\n", currentPlayer.ID)
+				fmt.Printf("GM：%sにレッドカードが付与されます。\n", currentPlayer.ID)
 				currentPlayer.SetSuspend()
 			}
 			// 30より大きければゲーム終了
 			if sumProgress >= 30 {
-				fmt.Println("目標達成！")
-				fmt.Printf("%sの勝利！他全員の敗北です！\n", currentPlayer.ID)
-				fmt.Println("もう一度プレイしますか？ 1：はい 2：いいえ")
+				fmt.Println("GM：目標達成！")
+				fmt.Printf("GM：%sの勝利！他全員の敗北です！\n", currentPlayer.ID)
+				fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 				if nextLine() == "1" {
 					playField.ResetRedCards()
 					event = "reset"
