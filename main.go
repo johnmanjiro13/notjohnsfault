@@ -174,7 +174,10 @@ GAME_ROOP:
 					fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 					if nextLine() == "1" {
 						playField.ResetRedCards()
+						playField.DowncardToDiscard()
+						playField.DiscardToDeck()
 						event = "reset"
+						isFirst = true
 						continue
 					}
 					break GAME_ROOP
@@ -190,7 +193,10 @@ GAME_ROOP:
 					fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 					if nextLine() == "1" {
 						playField.ResetRedCards()
+						playField.DowncardToDiscard()
+						playField.DiscardToDeck()
 						event = "reset"
+						isFirst = true
 						continue
 					}
 					break GAME_ROOP
@@ -205,7 +211,10 @@ GAME_ROOP:
 				fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 				if nextLine() == "1" {
 					playField.ResetRedCards()
+					playField.DowncardToDiscard()
+					playField.DiscardToDeck()
 					event = "reset"
+					isFirst = true
 					continue
 				}
 				break GAME_ROOP
