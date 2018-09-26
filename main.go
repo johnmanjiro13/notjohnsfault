@@ -9,6 +9,7 @@ import (
 	"github.com/johnmanjiro13/notjohnsfault/game/deck"
 	"github.com/johnmanjiro13/notjohnsfault/game/discard"
 	"github.com/johnmanjiro13/notjohnsfault/game/downcard"
+	"github.com/johnmanjiro13/notjohnsfault/game/event"
 	"github.com/johnmanjiro13/notjohnsfault/game/field"
 	"github.com/johnmanjiro13/notjohnsfault/game/milestone"
 	"github.com/johnmanjiro13/notjohnsfault/game/player"
@@ -55,18 +56,18 @@ func main() {
 	// フィールドに山札、伏せ札、捨て札を追加
 	playField := field.NewField(playDeck, playDowncard, playDiscard, *p1, *p2, *p3, *p4)
 
-	event := "reset"
+	phase := event.NewEvent()
 	isFirst := true
 GAME_ROOP:
 	for i := 1; ; i++ {
 		currentPlayer := &playField.CurrentPlayer
 		lastPlayer := &playField.LastPlayer
-		switch event {
+		switch phase.GetCurrentEvent() {
 		// ゲーム状態の初期化
 		case "reset":
 			playMilestone.ResetCurrentPoint()
 			playField.ResetYellowCards()
-			event = "standby"
+			phase.SetEvent("standby")
 		// スタンバイフェイズ
 		case "standby":
 			fmt.Printf("GM：現在のプレイヤーは%sです。", currentPlayer.ID)
@@ -76,12 +77,13 @@ GAME_ROOP:
 				fmt.Println("初回は監査できません。")
 				continue
 			}
+
 			if inputSelect == "1" {
 				fmt.Println("GM：申告します。")
-				event = "draw"
+				phase.SetEvent("draw")
 			} else if inputSelect == "2" {
 				fmt.Println("GM：監査！")
-				event = "judge"
+				phase.SetEvent("judge")
 			}
 			isFirst = false
 		// ドローアクション
@@ -92,7 +94,7 @@ GAME_ROOP:
 			if playField.GetDeckLength() == 0 {
 				playField.DiscardToDeck()
 			}
-			event = "report"
+			phase.SetEvent("report")
 		// 申告アクション
 		case "report":
 			if !currentPlayer.Warned {
@@ -104,7 +106,7 @@ GAME_ROOP:
 				}
 			}
 			fmt.Printf("GM：進捗を申告してください。現在の進捗：%d\n", playMilestone.GetCurrentPoint())
-			event = "milestone"
+			phase.SetEvent("milestone")
 		// 数字選択アクション
 		case "milestone":
 			inputNum, _ := strconv.Atoi(nextLine())
@@ -120,13 +122,13 @@ GAME_ROOP:
 			fmt.Printf("GM：進捗を報告しました。%d\n", playMilestone.GetCurrentPoint())
 			// 進捗が30を超えていたら最終判定へ
 			if playMilestone.GetCurrentPoint() >= 30 {
-				event = "judge"
+				phase.SetEvent("judge")
 				continue
 			}
 			playMilestone.RemoveWhiteValid()
 			// プレイヤーの状態移動
 			util.TransitState(playField)
-			event = "standby"
+			phase.SetEvent("standby")
 		// 監査アクション
 		case "judge":
 			sumProgress := playField.ComputeSumProgress()
@@ -144,7 +146,7 @@ GAME_ROOP:
 					fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 					if nextLine() == "1" {
 						playField.ResetAllCards()
-						event = "reset"
+						phase.SetEvent("reset")
 						isFirst = true
 						continue
 					}
@@ -161,7 +163,7 @@ GAME_ROOP:
 					fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 					if nextLine() == "1" {
 						playField.ResetAllCards()
-						event = "reset"
+						phase.SetEvent("reset")
 						isFirst = true
 						continue
 					}
@@ -177,7 +179,7 @@ GAME_ROOP:
 				fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 				if nextLine() == "1" {
 					playField.ResetAllCards()
-					event = "reset"
+					phase.SetEvent("reset")
 					isFirst = true
 					continue
 				}
@@ -187,7 +189,7 @@ GAME_ROOP:
 			// プレイヤーの状態移動
 			util.TransitState(playField)
 			isFirst = true
-			event = "reset"
+			phase.SetEvent("reset")
 		}
 	}
 }

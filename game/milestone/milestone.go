@@ -1,6 +1,10 @@
 package milestone
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/johnmanjiro13/notjohnsfault/util"
+)
 
 type Milestone struct {
 	CurrentPoint int
@@ -25,7 +29,7 @@ func (m *Milestone) ResetCurrentPoint() {
 }
 
 func (m *Milestone) SetCurrentPoint(reportedNumber int) error {
-	if m.IsWhiteValid || contains(blackNum, reportedNumber) {
+	if m.IsWhiteValid || util.ArrayContainsInt(blackNum, reportedNumber) {
 		m.CurrentPoint = reportedNumber
 		return nil
 	}
@@ -38,13 +42,4 @@ func (m *Milestone) SetWhiteValid() {
 
 func (m *Milestone) RemoveWhiteValid() {
 	m.IsWhiteValid = false
-}
-
-func contains(s []int, e int) bool {
-	for _, v := range s {
-		if e == v {
-			return true
-		}
-	}
-	return false
 }
