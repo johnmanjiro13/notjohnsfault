@@ -13,6 +13,7 @@ import (
 	"github.com/johnmanjiro13/notjohnsfault/game/field"
 	"github.com/johnmanjiro13/notjohnsfault/game/milestone"
 	"github.com/johnmanjiro13/notjohnsfault/game/player"
+	"github.com/johnmanjiro13/notjohnsfault/util"
 )
 
 var sc = bufio.NewScanner(os.Stdin)
@@ -151,11 +152,7 @@ GAME_ROOP:
 			}
 			playMilestone.RemoveWhiteValid()
 			// プレイヤーの状態移動
-			tmpPlayer := *currentPlayer
-			playField.SetCurrentPlayer(playField.NextPlayer)
-			playField.SetNextPlayer(playField.OppPlayer)
-			playField.SetOppPlayer(*lastPlayer)
-			playField.SetLastPlayer(tmpPlayer)
+			util.TransitState(playField)
 			event = "standby"
 		// 監査アクション
 		case "judge":
@@ -173,9 +170,7 @@ GAME_ROOP:
 					fmt.Printf("GM：%sの敗北！他全員の勝利です！\n", lastPlayer.ID)
 					fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 					if nextLine() == "1" {
-						playField.ResetRedCards()
-						playField.DowncardToDiscard()
-						playField.DiscardToDeck()
+						playField.ResetAllCards()
 						event = "reset"
 						isFirst = true
 						continue
@@ -192,9 +187,7 @@ GAME_ROOP:
 					fmt.Printf("GM：%sの敗北！他全員の勝利です！\n", currentPlayer.ID)
 					fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 					if nextLine() == "1" {
-						playField.ResetRedCards()
-						playField.DowncardToDiscard()
-						playField.DiscardToDeck()
+						playField.ResetAllCards()
 						event = "reset"
 						isFirst = true
 						continue
@@ -210,9 +203,7 @@ GAME_ROOP:
 				fmt.Printf("GM：%sの勝利！他全員の敗北です！\n", currentPlayer.ID)
 				fmt.Println("GM：もう一度プレイしますか？ 1：はい 2：いいえ")
 				if nextLine() == "1" {
-					playField.ResetRedCards()
-					playField.DowncardToDiscard()
-					playField.DiscardToDeck()
+					playField.ResetAllCards()
 					event = "reset"
 					isFirst = true
 					continue
@@ -221,11 +212,7 @@ GAME_ROOP:
 			}
 			playField.DowncardToDiscard()
 			// プレイヤーの状態移動
-			tmpPlayer := *currentPlayer
-			playField.SetCurrentPlayer(playField.NextPlayer)
-			playField.SetNextPlayer(playField.OppPlayer)
-			playField.SetOppPlayer(*lastPlayer)
-			playField.SetLastPlayer(tmpPlayer)
+			util.TransitState(playField)
 			isFirst = true
 			event = "reset"
 		}
