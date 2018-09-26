@@ -11,7 +11,8 @@ type Deck struct {
 	Cards card.Cards
 }
 
-func NewDeck(c []card.ICard) *Deck {
+func NewDeck() *Deck {
+	c := card.GenerateCards()
 	return &Deck{
 		Cards: c,
 	}

@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/johnmanjiro13/notjohnsfault/game/card"
 	"github.com/johnmanjiro13/notjohnsfault/game/deck"
 	"github.com/johnmanjiro13/notjohnsfault/game/discard"
 	"github.com/johnmanjiro13/notjohnsfault/game/downcard"
@@ -25,33 +24,7 @@ func nextLine() string {
 
 func main() {
 	// 各カード要素の初期化
-	cards := []card.ICard{}
-	for i := 0; i < 32; i++ {
-		switch {
-		case (i >= 0 && i < 2):
-			newCard := card.Card{Number: 0}
-			cards = append(cards, newCard)
-		case (i >= 2 && i < 6):
-			newCard := card.Card{Number: 1}
-			cards = append(cards, newCard)
-		case (i >= 6 && i < 11):
-			newCard := card.Card{Number: 2}
-			cards = append(cards, newCard)
-		case (i >= 11 && i < 16):
-			newCard := card.Card{Number: 3}
-			cards = append(cards, newCard)
-		case (i >= 16 && i < 21):
-			newCard := card.Card{Number: 4}
-			cards = append(cards, newCard)
-		case (i >= 21 && i < 26):
-			newCard := card.Card{Number: 5}
-			cards = append(cards, newCard)
-		case (i >= 26 && i < 31):
-			newCard := card.Card{Number: 6}
-			cards = append(cards, newCard)
-		}
-	}
-	playDeck := deck.NewDeck(cards)
+	playDeck := deck.NewDeck()
 	playDowncard := downcard.NewDowncard()
 	playDiscard := discard.NewDiscard()
 
